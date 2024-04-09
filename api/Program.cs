@@ -1,18 +1,30 @@
-var builder = WebApplication.CreateBuilder(args);
-var app = builder.Build();
+using System.Reflection.Metadata.Ecma335;
 
-app.MapGet("/", () => @"
-<!DOCTYPE html>
-<html lang=""en"">
-<head>
-    <meta charset=""UTF-8"">
-    <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
-    <title>Document</title>
-</head>
-<body>
-    <h1>Hello, World!</h1>
-</body>
-</html>
-");
+var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddCors();
+var app = builder.Build();
+app.UseCors(options => {
+    options.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod();
+});
+
+List<User> users = [
+    new User("User 1", Guid.NewGuid()),
+    new User("User 2", Guid.NewGuid()),
+    new User("User 3", Guid.NewGuid())
+];
+
+app.MapGet("/userAccounts", () => {
+    return users;
+});
+
+app.MapPost("/addAccount", (UserCreationRequest userRequest) => {
+    var newUser = new User(userRequest.UserName, Guid.NewGuid());
+    users.Add(newUser);
+});
 
 app.Run();
+
+record User(string UserName, Guid Id);
+
+record UserCreationRequest(string UserName);
+
