@@ -9,11 +9,11 @@ const setupForm = () => {
     const formElement = document.getElementById("userCreationForm");
     formElement.addEventListener("submit", async (event) => {
         event.preventDefault();
-
-        const userName = document.getElementById("userName").value;
-        await AddUser(userName);
+        const userName = document.getElementById("userName");
+        await AddUser(userName.value);
         userAccounts = await GetAllUserAccounts();
         await renderUserAccounts();
+        userName.value = "";
     });
 }
 
@@ -27,8 +27,6 @@ const renderUserAccounts = async () => {
         container.appendChild(userCard);
     });
 }
-
-
 
 console.log(userAccounts);
 await renderUserAccounts();
